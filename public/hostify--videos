@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Hostify Video Upload</title>
+  <style>
+    body {
+      font-family: Arial;
+      background: #0d1117;
+      color: white;
+      text-align: center;
+      padding-top: 40px;
+    }
+    .card {
+      background: #161b22;
+      padding: 20px;
+      border-radius: 10px;
+      width: 320px;
+      margin: auto;
+    }
+    button {
+      padding: 12px 18px;
+      border: none;
+      background: #238636;
+      color: white;
+      font-size: 16px;
+      border-radius: 6px;
+      margin-top: 10px;
+    }
+    input {
+      margin: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Hostify Video Uploader</h1>
+
+  <div class="card">
+    <input type="file" id="file" accept="video/*"><br>
+    <button onclick="uploadVideo()">Upload</button>
+
+    <p id="status"></p>
+    <p id="link"></p>
+  </div>
+
+<script>
+  async function uploadVideo() {
+    const file = document.getElementById("file").files[0];
+    if (!file) {
+      alert("Select a video first!");
+      return;
+    }
+
+    const form = new FormData();
+    form.append("video", file);
+
+    document.getElementById("status").innerText = "Uploading...";
+
+    const res = await fetch("/upload", {
+      method: "POST",
+      body: form
+    });
+
+    const data = await res.json();
+
+    if (data.url) {
+      document.getElementById("status").innerText = "Upload Complete!";
+      document.getElementById("link").innerHTML = `
+        <a href="${data.url}" target="_blank">Click to open video</a>
+      `;
+    } else {
+      document.getElementById("status").innerText = "Error uploading!";
+    }
+  }
+</script>
+
+</body>
+</html>
